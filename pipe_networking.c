@@ -18,6 +18,8 @@ int client_handshake(int *to_server){
   if (strcmp(read(fd_priv, output, strlen(SERVER_CONFIRM)))) printf(ouptut);
   else printf("Recieved from server: %s\nConfirmation failed.", output);
 
+  //8. Write
+
   return from_server;
 }
 
@@ -25,13 +27,18 @@ int client_handshake(int *to_server){
 int server_handshake(int *from_client){
   //1. server creates well known pipe and opens to read
   mkfifo(WKP,0644);
-  int from_client = open(WKP, O_RDONLY);
+  from_client = open(WKP, O_RDONLY);
 
-  //read private pipe name from client.
+  //5. Open private pipe from client.
   char* buff;
   read(from_client,buff,sizeof(buff));
 
-  buff[11]=0;
-  write(buff,
+  //6. Remove the WKP
+  close(from_client);
+
+  //7. Write confirm through the private pipe
+  int to_client = open(buff, O_WRONLY);
+  char* confirm = SERVER_CONFIRM;
+  write(to_client, confirm, strlen(confirm);
   
 }
